@@ -11,33 +11,17 @@ public enum BlockType
 public class Block : MonoBehaviour
 {
     [SerializeField] private BlockType _blockType;
+    [SerializeField] private int _health;
+    [SerializeField] private AudioClip _hitSound;
     
     private Renderer rend;
     private Material originalMat;
     public Material whiteFlashMaterial;
 
-    private int _health;
-
     private void Awake()
     {
         rend = GetComponent<Renderer>();
         originalMat = rend.material;
-    }
-
-    private void Start()
-    {
-        switch (_blockType)
-        {
-            case BlockType.Dirt:
-                _health = 1;
-                break;
-            case BlockType.Rock:
-                _health = 3;
-                break;
-            case BlockType.Metal:
-                _health = 1000;
-                break;
-        }
     }
 
     public void FlashWhite(float duration = 0.05f)

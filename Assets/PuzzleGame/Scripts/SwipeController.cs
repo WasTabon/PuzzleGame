@@ -8,6 +8,14 @@ using DG.Tweening;
 [RequireComponent(typeof(Rigidbody))]
 public class SwipeController : MonoBehaviour
 {
+    [Header("Walk Step Particles")]
+    public Transform stepPointLeft;
+    public Transform stepPointRight;
+    public GameObject stepParticlePrefab;
+    
+    public GameObject particle;
+    public Transform spawnPoint;
+    
     public Transform handTransform;
     
     public CameraShake cameraShake;
@@ -346,6 +354,21 @@ public class SwipeController : MonoBehaviour
         }
     }
     
+    public void SpawnParticleAtTransform()
+    {
+        if (particle != null && spawnPoint != null)
+        {
+            Vector3 spawnPos = spawnPoint.position; // фиксируем позицию до Instantiate
+            Quaternion spawnRot = Quaternion.Euler(0, 0, -45); // фиксированное вращение
+
+            Instantiate(particle, spawnPos, spawnRot);
+        }
+        else
+        {
+            Debug.LogWarning("SpawnParticleAtTransform: particle или spawnPoint не назначены");
+        }
+    }
+    
     private Block FindBlockAtPosition(Vector3 pos)
     {
         Collider[] hits = Physics.OverlapSphere(pos, 0.1f);
@@ -356,4 +379,29 @@ public class SwipeController : MonoBehaviour
         }
         return null;
     }
+    
+    public void SpawnStepParticleLeft()
+    {
+        if (stepParticlePrefab != null && stepPointLeft != null)
+        {
+            Instantiate(stepParticlePrefab, stepPointLeft.position, stepPointLeft.rotation);
+        }
+        else
+        {
+            Debug.LogWarning("StepParticleLeft: не назначены point или prefab");
+        }
+    }
+    
+    public void SpawnStepParticleRight()
+    {
+        if (stepParticlePrefab != null && stepPointRight != null)
+        {
+            Instantiate(stepParticlePrefab, stepPointRight.position, stepPointRight.rotation);
+        }
+        else
+        {
+            Debug.LogWarning("StepParticleRight: не назначены point или prefab");
+        }
+    }
+
 }
