@@ -1,4 +1,8 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using DG.Tweening;
+
 
 [RequireComponent(typeof(Rigidbody))]
 public class SwipeController : MonoBehaviour
@@ -14,6 +18,8 @@ public class SwipeController : MonoBehaviour
     private bool isSwiping;
     private string currentDirection;
 
+    private Block currentHitBlock;
+    
     private Animator animator;
     private Rigidbody rb;
 
@@ -179,28 +185,29 @@ public class SwipeController : MonoBehaviour
             if (hit.collider.TryGetComponent(out Block block))
             {
                 lastAttackTime = Time.time;
+
                 if (!isAttacking)
                 {
                     isAttacking = true;
                     animator.SetBool("Attack", true);
                 }
 
-                block.Attack();
+                // Сохраняем блок для последующей атаки в момент эффекта
+                currentHitBlock = block;
 
-                // Сохраняем верхнюю точку блока для спавна эффекта
+                // Сохраняем верхнюю точку блока для позиционирования эффекта
                 blockTopPoint = hit.collider.bounds.max;
-
-                // Сохраняем позицию по X и Z для расчета в SpawnAttackEffect
-                // lastHitPoint больше не нужен, можно удалить или не использовать
             }
             else
             {
                 StopAttack();
+                currentHitBlock = null;
             }
         }
         else
         {
             StopAttack();
+            currentHitBlock = null;
         }
     }
 
@@ -227,6 +234,13 @@ public class SwipeController : MonoBehaviour
             Instantiate(attackEffectPrefab, effectPos, Quaternion.identity);
 
             cameraShake.Shake(0.15f, 0.15f);
+
+            if (currentHitBlock != null)
+            {
+                currentHitBlock.Attack();
+                AnimateWaveFromBlock(currentHitBlock);
+                currentHitBlock = null; // сбрасываем после использования
+            }
         }
     }
 
@@ -237,5 +251,70 @@ public class SwipeController : MonoBehaviour
 
         Gizmos.color = Color.green;
         Gizmos.DrawRay(transform.position, rayDirection * rayDistance);
+    }
+    
+    private void AnimateWaveFromBlock(Block centerBlock)
+    {
+        Vector3 centerPos = centerBlock.transform.position;
+        float spacing = 1f; // предполагаем, что блоки расположены через 1 юнит по X
+        float jumpHeight = 0.3f;
+        float jumpDuration = 0.3f;
+        float delayBetweenBlocks = 0.05f;
+
+        List<Block> waveBlocks = new List<Block> { centerBlock };
+
+        // Добавляем до 2 блоков влево
+        for (int i = 1; i <= 2; i++)
+        {
+            Vector3 leftPos = centerPos + Vector3.left * spacing * i;
+            Block leftBlock = FindBlockAtPosition(leftPos);
+            if (leftBlock != null)
+                waveBlocks.Add(leftBlock);
+            else
+                break; // если нет блока — дальше не ищем
+        }
+
+        // Добавляем до 2 блоков вправо
+        for (int i = 1; i <= 2; i++)
+        {
+            Vector3 rightPos = centerPos + Vector3.right * spacing * i;
+            Block rightBlock = FindBlockAtPosition(rightPos);
+            if (rightBlock != null)
+                waveBlocks.Add(rightBlock);
+            else
+                break;
+        }
+
+        // Сортируем блоки по расстоянию до центра (чтобы применить задержку)
+        waveBlocks = waveBlocks.OrderBy(b => Vector3.Distance(centerPos, b.transform.position)).ToList();
+
+        for (int i = 0; i < waveBlocks.Count; i++)
+        {
+            Block b = waveBlocks[i];
+            float delay = i * delayBetweenBlocks;
+
+            Transform t = b.transform;
+            Vector3 originalPos = t.position;
+
+            // Подпрыгивание
+            t.DOMoveY(originalPos.y + jumpHeight, jumpDuration / 2)
+                .SetDelay(delay)
+                .SetEase(Ease.OutQuad)
+                .OnComplete(() =>
+                {
+                    t.DOMoveY(originalPos.y, jumpDuration / 2).SetEase(Ease.InQuad);
+                });
+        }
+    }
+    
+    private Block FindBlockAtPosition(Vector3 pos)
+    {
+        Collider[] hits = Physics.OverlapSphere(pos, 0.1f);
+        foreach (var hit in hits)
+        {
+            if (hit.TryGetComponent(out Block block))
+                return block;
+        }
+        return null;
     }
 }
