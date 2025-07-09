@@ -16,8 +16,14 @@ public class SwipeController : MonoBehaviour
     private Rigidbody rb;
 
     private bool isAttacking = false;
-    private float attackCooldown = 1.8f;   // время между атаками
+    private float attackCooldown = 1.8f;
     private float lastAttackTime = -Mathf.Infinity;
+    
+    public float effectOffsetX = 5f;
+
+    private Vector3 lastHitPoint;
+    
+    private Vector3 blockTopPoint;
 
     private void Start()
     {
@@ -154,7 +160,6 @@ public class SwipeController : MonoBehaviour
     {
         if (Time.time < lastAttackTime + attackCooldown)
         {
-            // Атака на откате — продолжаем проигрывать анимацию
             if (!isAttacking)
             {
                 animator.SetBool("Attack", true);
@@ -180,18 +185,19 @@ public class SwipeController : MonoBehaviour
 
                 block.Attack();
 
-                // Запускаем партикл через 0.22 секунды
-                StartCoroutine(SpawnEffectWithDelay(0.22f, hit.point));
+                // Сохраняем верхнюю точку блока для спавна эффекта
+                blockTopPoint = hit.collider.bounds.max;
+
+                // Сохраняем позицию по X и Z для расчета в SpawnAttackEffect
+                // lastHitPoint больше не нужен, можно удалить или не использовать
             }
             else
             {
-                // Нет блока под персонажем — прерываем атаку
                 StopAttack();
             }
         }
         else
         {
-            // Нет блока под персонажем — прерываем атаку
             StopAttack();
         }
     }
@@ -205,13 +211,18 @@ public class SwipeController : MonoBehaviour
         }
     }
 
-    private System.Collections.IEnumerator SpawnEffectWithDelay(float delay, Vector3 hitPoint)
+    // Этот метод вызывается из Animation Event (без параметров!)
+    public void SpawnAttackEffect()
     {
-        yield return new WaitForSeconds(delay);
-
         if (attackEffectPrefab != null && pickaxe != null)
         {
-            Vector3 effectPos = (pickaxe.position + hitPoint) / 2f;
+            Vector3 effectPos = new Vector3(
+                pickaxe.position.x + effectOffsetX,
+                (pickaxe.position.y + blockTopPoint.y) / 2f,
+                (pickaxe.position.z + blockTopPoint.z) / 2f
+            );
+
+            Debug.Log("Spawn effect at " + effectPos);
             Instantiate(attackEffectPrefab, effectPos, Quaternion.identity);
         }
     }
