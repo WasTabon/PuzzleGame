@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 using DG.Tweening;
@@ -111,7 +112,7 @@ public class SwipeController : MonoBehaviour
         }
         else
         {
-            rb.velocity = new Vector3(0, rb.velocity.y, 0); // Остановить по X
+            rb.velocity = new Vector3(rb.velocity.x * 0.9f, rb.velocity.y, 0);
             ResetAnimator();
             StopAttack();
         }
@@ -251,6 +252,7 @@ public class SwipeController : MonoBehaviour
     {
         if (attackEffectPrefab != null && pickaxe != null)
         {
+            transform.DOShakePosition(0.15f, new Vector3(0.1f, 0.1f, 0), vibrato: 10, randomness: 90);
             Vector3 effectPos = new Vector3(
                 pickaxe.position.x + effectOffsetX,
                 (pickaxe.position.y + blockTopPoint.y) / 2f,
@@ -259,6 +261,7 @@ public class SwipeController : MonoBehaviour
 
             Debug.Log("Spawn effect at " + effectPos);
             Instantiate(attackEffectPrefab, effectPos, Quaternion.identity);
+            StartCoroutine(DoHitStop(0.05f));
 
             cameraShake.Shake(0.15f, 0.2f);
 
@@ -269,6 +272,13 @@ public class SwipeController : MonoBehaviour
                 currentHitBlock = null; // сбрасываем после использования
             }
         }
+    }
+    
+    private IEnumerator DoHitStop(float duration)
+    {
+        Time.timeScale = 0f;
+        yield return new WaitForSecondsRealtime(duration);
+        Time.timeScale = 1f;
     }
 
     private void OnDrawGizmos()
