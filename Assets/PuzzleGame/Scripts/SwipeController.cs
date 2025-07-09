@@ -32,6 +32,8 @@ public class SwipeController : MonoBehaviour
     private Vector3 lastHitPoint;
     
     private Vector3 blockTopPoint;
+    
+    private Tween moveTween;
 
     private void Start()
     {
@@ -127,34 +129,59 @@ public class SwipeController : MonoBehaviour
     {
         if (direction == "Down")
         {
-            // Запускаем или продолжаем атаку вниз
             TryAttackDownward();
-            rb.velocity = new Vector3(0, rb.velocity.y, 0); // Остановить движение по X во время атаки
+            StopHorizontalMovement(); // плавно остановить движение
         }
         else
         {
-            // Сбросим атаку, если был свайп вниз, а теперь движение в другую сторону
             StopAttack();
-
             ResetAnimator();
 
             switch (direction)
             {
                 case "Left":
                     animator.SetBool("MoveLeft", true);
-                    rb.velocity = new Vector3(-moveSpeed, rb.velocity.y, 0);
+                    AccelerateToDirection(-moveSpeed);
                     break;
 
                 case "Right":
                     animator.SetBool("MoveRight", true);
-                    rb.velocity = new Vector3(moveSpeed, rb.velocity.y, 0);
+                    AccelerateToDirection(moveSpeed);
                     break;
 
                 default:
-                    rb.velocity = new Vector3(0, rb.velocity.y, 0);
+                    StopHorizontalMovement();
                     break;
             }
         }
+    }
+    
+    private void AccelerateToDirection(float targetX)
+    {
+        if (moveTween != null && moveTween.IsActive())
+            moveTween.Kill();
+
+        float startX = rb.velocity.x;
+        float y = rb.velocity.y;
+
+        moveTween = DOTween.To(() => startX, x => {
+            rb.velocity = new Vector3(x, y, 0);
+            startX = x; // обновляем текущую скорость, чтобы tween продолжал корректно
+        }, targetX, 0.1f).SetEase(Ease.OutSine);
+    }
+
+    private void StopHorizontalMovement()
+    {
+        if (moveTween != null && moveTween.IsActive())
+            moveTween.Kill();
+
+        float startX = rb.velocity.x;
+        float y = rb.velocity.y;
+
+        moveTween = DOTween.To(() => startX, x => {
+            rb.velocity = new Vector3(x, y, 0);
+            startX = x;
+        }, 0f, 0.1f).SetEase(Ease.OutSine);
     }
 
     private void ResetAnimator()
