@@ -3,6 +3,8 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class SwipeController : MonoBehaviour
 {
+    public CameraShake cameraShake;
+    
     public float swipeThreshold = 50f;
     public float moveSpeed = 5f;
     public Transform pickaxe;
@@ -211,7 +213,6 @@ public class SwipeController : MonoBehaviour
         }
     }
 
-    // Этот метод вызывается из Animation Event (без параметров!)
     public void SpawnAttackEffect()
     {
         if (attackEffectPrefab != null && pickaxe != null)
@@ -224,6 +225,8 @@ public class SwipeController : MonoBehaviour
 
             Debug.Log("Spawn effect at " + effectPos);
             Instantiate(attackEffectPrefab, effectPos, Quaternion.identity);
+
+            cameraShake.Shake(0.15f, 0.15f);
         }
     }
 

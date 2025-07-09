@@ -345,6 +345,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ac2ed0c8c9e2354d8cdeae70879b53e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &478964978
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 478964979}
+  m_Layer: 0
+  m_Name: Controllers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &478964979
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 478964978}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.5735393, y: -2.7098088, z: 7.069681}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &679792879
 GameObject:
   m_ObjectHideFlags: 0
@@ -686,6 +717,7 @@ GameObject:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
+  - component: {fileID: 963194229}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -767,6 +799,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &963194229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b9c2b216a473c34fa85f9cd3dc1421a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2035351825
 GameObject:
   m_ObjectHideFlags: 0
@@ -4267,10 +4311,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb4cbf9ae9263f240a38493efdfdfeae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cameraShake: {fileID: 963194229}
   swipeThreshold: 50
   moveSpeed: 3
   pickaxe: {fileID: 2035351826}
   attackEffectPrefab: {fileID: 1405538040440099740, guid: b00c9e850a6f592468405e09020ef94a, type: 3}
+  effectOffsetX: 0.2
 --- !u!54 &9144092278668301904
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4309,3 +4355,4 @@ SceneRoots:
   - {fileID: 679792884}
   - {fileID: 930559730}
   - {fileID: 9144092278668301894}
+  - {fileID: 478964979}
