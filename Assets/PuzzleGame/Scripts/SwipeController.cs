@@ -8,6 +8,8 @@ using DG.Tweening;
 [RequireComponent(typeof(Rigidbody))]
 public class SwipeController : MonoBehaviour
 {
+    public Transform handTransform;
+    
     public CameraShake cameraShake;
     
     public float swipeThreshold = 50f;
@@ -206,7 +208,7 @@ public class SwipeController : MonoBehaviour
 
         int playerLayer = LayerMask.NameToLayer("Player");
         int layerMask = ~(1 << playerLayer);
-        Vector3 rayOrigin = transform.position + Vector3.up * 0.1f;
+        Vector3 rayOrigin = handTransform.position + Vector3.up * 0.1f;
 
         if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, 20f, layerMask))
         {
@@ -287,7 +289,7 @@ public class SwipeController : MonoBehaviour
         Vector3 rayDirection = Vector3.down;
 
         Gizmos.color = Color.green;
-        Gizmos.DrawRay(transform.position, rayDirection * rayDistance);
+        Gizmos.DrawRay(handTransform.position, rayDirection * rayDistance);
     }
     
     private void AnimateWaveFromBlock(Block centerBlock)
