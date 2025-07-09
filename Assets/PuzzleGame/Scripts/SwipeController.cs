@@ -233,7 +233,7 @@ public class SwipeController : MonoBehaviour
             Debug.Log("Spawn effect at " + effectPos);
             Instantiate(attackEffectPrefab, effectPos, Quaternion.identity);
 
-            cameraShake.Shake(0.15f, 0.15f);
+            cameraShake.Shake(0.15f, 0.2f);
 
             if (currentHitBlock != null)
             {
