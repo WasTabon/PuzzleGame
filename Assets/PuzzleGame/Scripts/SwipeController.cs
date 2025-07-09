@@ -382,26 +382,12 @@ public class SwipeController : MonoBehaviour
     
     public void SpawnStepParticleLeft()
     {
-        if (stepParticlePrefab != null && stepPointLeft != null)
-        {
-            Instantiate(stepParticlePrefab, stepPointLeft.position, stepPointLeft.rotation);
-        }
-        else
-        {
-            Debug.LogWarning("StepParticleLeft: не назначены point или prefab");
-        }
+        Instantiate(stepParticlePrefab, stepPointLeft.position, stepPointLeft.rotation);
     }
     
     public void SpawnStepParticleRight()
     {
-        if (stepParticlePrefab != null && stepPointRight != null)
-        {
-            Instantiate(stepParticlePrefab, stepPointRight.position, stepPointRight.rotation);
-        }
-        else
-        {
-            Debug.LogWarning("StepParticleRight: не назначены point или prefab");
-        }
+        Instantiate(stepParticlePrefab, stepPointRight.position, stepPointRight.rotation);
     }
 
 }
