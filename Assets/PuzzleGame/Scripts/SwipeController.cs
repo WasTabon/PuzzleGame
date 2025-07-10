@@ -3,10 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using DG.Tweening;
+using PuzzleGame.Scripts;
 
 [RequireComponent(typeof(Rigidbody))]
 public class SwipeController : MonoBehaviour
 {
+    [SerializeField] private List<AudioClip> _walkSoundsDirt;
+    [SerializeField] private List<AudioClip> _walkSoundsRock;
+    [SerializeField] private List<AudioClip> _walkSoundsMetal;
+    
+    [SerializeField] private AudioClip _landSoundDirt;
+    [SerializeField] private AudioClip _landSoundRock;
+    [SerializeField] private AudioClip _landSoundMetal;
+    
     [SerializeField] private int _attackCount;
     
     [Header("Walk Step Particles")] public Transform stepPointLeft;
@@ -361,11 +370,37 @@ public class SwipeController : MonoBehaviour
     public void SpawnStepParticleLeft()
     {
         particlePool?.Spawn("stepLeft", stepPointLeft.position, stepPointLeft.rotation);
+        
+        PlayWalkSound();
     }
 
     public void SpawnStepParticleRight()
     {
         particlePool?.Spawn("stepRight", stepPointRight.position, stepPointRight.rotation);
+        
+        PlayWalkSound();
+    }
+
+    private void PlayWalkSound()
+    {
+        if (blockUnderPlayer == null)
+            return;
+        
+        if (blockUnderPlayer._blockType == BlockType.Dirt)
+        {
+            int randomSound = Random.Range(0, _walkSoundsDirt.Count);
+            MusicController.Instance.PlaySpecificSound(_walkSoundsDirt[randomSound]);
+        }
+        else if (blockUnderPlayer._blockType == BlockType.Rock)
+        {
+            int randomSound = Random.Range(0, _walkSoundsRock.Count);
+            MusicController.Instance.PlaySpecificSound(_walkSoundsRock[randomSound]);
+        }
+        else if (blockUnderPlayer._blockType == BlockType.Metal)
+        {
+            int randomSound = Random.Range(0, _walkSoundsMetal.Count);
+            MusicController.Instance.PlaySpecificSound(_walkSoundsMetal[randomSound]);
+        }
     }
 
     private void CheckBlockUnderPlayer()
@@ -431,6 +466,7 @@ public class SwipeController : MonoBehaviour
         {
             isFalling = false;
             animator.SetBool("Fall", false);
+            PlayLandSound();
         }
     }
 
@@ -482,6 +518,30 @@ public class SwipeController : MonoBehaviour
                 .SetEase(Ease.OutQuad)
                 .OnComplete(() => { t.DOMoveY(originalPos.y, jumpDuration / 2).SetEase(Ease.InQuad); });
         }
+    }
+    
+    private void PlayLandSound()
+    {
+        if (blockUnderPlayer == null)
+            return;
+
+        AudioClip clip = null;
+
+        switch (blockUnderPlayer._blockType)
+        {
+            case BlockType.Dirt:
+                clip = _landSoundDirt;
+                break;
+            case BlockType.Rock:
+                clip = _landSoundRock;
+                break;
+            case BlockType.Metal:
+                clip = _landSoundMetal;
+                break;
+        }
+
+        if (clip != null)
+            MusicController.Instance.PlaySpecificSound(clip);
     }
 
     private Block FindBlockAtPosition(Vector3 pos)

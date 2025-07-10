@@ -59104,6 +59104,7 @@ GameObject:
   - component: {fileID: 3710389447756799527}
   - component: {fileID: 8685498016994501206}
   - component: {fileID: 2084164409631871520}
+  - component: {fileID: 3220534851338067927}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -59166,7 +59167,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 0.32445395, y: 1.7310157, z: 0.2803347}
   m_Center: {x: 0.0014303327, y: 0.86955786, z: 0.01974833}
@@ -59182,6 +59183,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb4cbf9ae9263f240a38493efdfdfeae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _walkSounds:
+  - {fileID: 8300000, guid: 3c4b7f1b9fafaeb4eb292a507a159166, type: 3}
+  - {fileID: 8300000, guid: a410235071fabd64188aa25709b90d74, type: 3}
+  - {fileID: 8300000, guid: 85bc08df3b1b8f04eaa1d4c0232d6be6, type: 3}
+  _attackCount: 3
   stepPointLeft: {fileID: 3173527867171855040}
   stepPointRight: {fileID: 3758912929525337189}
   stepParticlePrefab: {fileID: 5173427560926668776, guid: 880c519bb3845084fb22f3469527b782, type: 3}
@@ -59193,6 +59199,7 @@ MonoBehaviour:
   moveSpeed: 4
   pickaxe: {fileID: 9155516816826334298}
   attackEffectPrefab: {fileID: 1405538040440099740, guid: b00c9e850a6f592468405e09020ef94a, type: 3}
+  groundCheckDistance: 0.2
   effectOffsetX: 0.2
 --- !u!54 &2084164409631871520
 Rigidbody:
@@ -59219,8 +59226,31 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 88
+  m_Constraints: 120
   m_CollisionDetection: 0
+--- !u!136 &3220534851338067927
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7689748169312236004}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.25
+  m_Height: 1.7
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.85, z: 0}
 --- !u!1 &7691584728434547528
 GameObject:
   m_ObjectHideFlags: 0
