@@ -1,5 +1,5 @@
 using System;
-using PowerLines.Scripts;
+using PuzzleGame.Scripts;
 using UnityEngine;
 
 public enum BlockType

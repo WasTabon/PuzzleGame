@@ -1308,6 +1308,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _blockTypeText: {fileID: 1649871076}
   _attacksCountText: {fileID: 809612114}
+  parentPanel: {fileID: 1729796229}
+  panel: {fileID: 304968834}
+  titleText: {fileID: 297388509}
+  button1: {fileID: 344436296}
+  button2: {fileID: 675889013}
 --- !u!1 &773896701
 GameObject:
   m_ObjectHideFlags: 0
@@ -2431,7 +2436,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1729796230
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2915,7 +2920,7 @@ PrefabInstance:
       objectReference: {fileID: 963194229}
     - target: {fileID: 8685498016994501206, guid: 50e8cbac86367dc43968b938a4c039b2, type: 3}
       propertyPath: _attackCount
-      value: 50
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2966,6 +2971,6 @@ SceneRoots:
   - {fileID: 1759091571}
   - {fileID: 581282726}
   - {fileID: 9144092278668301894}
-  - {fileID: 478964979}
   - {fileID: 1877139625}
+  - {fileID: 478964979}
   - {fileID: 198099808}

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace PowerLines.Scripts
+namespace PuzzleGame.Scripts
 {
     public class MusicController : MonoBehaviour
     {

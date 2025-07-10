@@ -337,7 +337,7 @@ public class SwipeController : MonoBehaviour
         UIController.Instance.SetAttacksText(_attackCount);
         if (_attackCount <= 0)
         {
-            
+            UIController.Instance.ShowPanel();
         }
     }
 
