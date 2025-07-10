@@ -41,8 +41,8 @@ public class Block : MonoBehaviour
     public void Attack()
     {
         FlashWhite();
-        Instantiate(_particle, transform.position, Quaternion.identity);
-        gameObject.SetActive(false);
+        //Instantiate(_particle, transform.position, Quaternion.identity);
+        //gameObject.SetActive(false);
         _health--;
     }
 }
