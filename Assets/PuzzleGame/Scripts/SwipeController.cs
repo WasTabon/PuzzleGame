@@ -71,6 +71,8 @@ public class SwipeController : MonoBehaviour
 
         InvokeRepeating(nameof(CheckBlockUnderPlayer), 0f, checkInterval);
         InvokeRepeating(nameof(CheckGrounded), 0f, checkInterval);
+        
+        UIController.Instance.SetAttacksText(_attackCount);
     }
 
     private void Update()
@@ -332,6 +334,7 @@ public class SwipeController : MonoBehaviour
 
     public void CheckAttackCount()
     {
+        UIController.Instance.SetAttacksText(_attackCount);
         if (_attackCount <= 0)
         {
             

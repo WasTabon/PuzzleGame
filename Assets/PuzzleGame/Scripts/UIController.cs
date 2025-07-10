@@ -7,6 +7,7 @@ public class UIController : MonoBehaviour
     public static UIController Instance;
 
     [SerializeField] private TextMeshProUGUI _blockTypeText;
+    [SerializeField] private TextMeshProUGUI _attacksCountText;
 
     private string _prefix = "Block type: ";
     private Coroutine _animCoroutine;
@@ -16,7 +17,11 @@ public class UIController : MonoBehaviour
         Instance = this;
     }
 
-    // Перегрузка — без параметров будет удалять текст после префикса
+    public void SetAttacksText(int attacksCount)
+    {
+        _attacksCountText.text = $"Smashes: {attacksCount.ToString()}";
+    }
+    
     public void SetBlockText()
     {
         if (_animCoroutine != null)
