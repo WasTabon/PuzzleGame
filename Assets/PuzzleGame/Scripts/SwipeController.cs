@@ -365,6 +365,7 @@ public class SwipeController : MonoBehaviour
                     DisableCurrentOutline();
 
                     blockUnderPlayer = block;
+                    UIController.Instance.SetBlockText(block._blockType);
                     currentOutline = blockUnderPlayer.GetComponent<Outline>();
                     if (currentOutline != null)
                         currentOutline.enabled = true;
@@ -373,11 +374,13 @@ public class SwipeController : MonoBehaviour
             else
             {
                 DisableCurrentOutline();
+                UIController.Instance.SetBlockText();
             }
         }
         else
         {
             DisableCurrentOutline();
+            UIController.Instance.SetBlockText();
         }
     }
 

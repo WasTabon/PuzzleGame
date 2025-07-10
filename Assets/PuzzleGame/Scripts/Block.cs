@@ -12,7 +12,7 @@ public enum BlockType
 public class Block : MonoBehaviour
 {
     [SerializeField] private GameObject _particle;
-    [SerializeField] private BlockType _blockType;
+    public BlockType _blockType;
     [SerializeField] private int _health;
     [SerializeField] private AudioClip _hitSound;
     
