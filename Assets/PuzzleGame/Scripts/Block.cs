@@ -10,6 +10,7 @@ public enum BlockType
 
 public class Block : MonoBehaviour
 {
+    [SerializeField] private GameObject _particle;
     [SerializeField] private BlockType _blockType;
     [SerializeField] private int _health;
     [SerializeField] private AudioClip _hitSound;
@@ -40,6 +41,8 @@ public class Block : MonoBehaviour
     public void Attack()
     {
         FlashWhite();
+        Instantiate(_particle, transform.position, Quaternion.identity);
+        gameObject.SetActive(false);
         _health--;
     }
 }
