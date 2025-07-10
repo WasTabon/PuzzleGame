@@ -62,9 +62,7 @@ public class UIController : MonoBehaviour
         parentPanel.SetActive(true);
         panel.anchoredPosition = new Vector2(Screen.width, 0);
 
-        // Play panel slide sound
-        if (panelSlideSound != null)
-            MusicController.Instance.PlaySpecificSound(panelSlideSound);
+        MusicController.Instance.PlaySpecificSound(panelSlideSound);
 
         panel.DOAnchorPos(Vector2.zero, 0.5f).SetEase(Ease.OutBack).OnComplete(() =>
         {
