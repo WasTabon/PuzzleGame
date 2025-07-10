@@ -326,17 +326,21 @@ public class SwipeController : MonoBehaviour
         float jumpDuration = 0.3f;
         float delayBetweenBlocks = 0.05f;
 
-        List<Block> waveBlocks = new List<Block> { centerBlock };
+        List<Block> waveBlocks = new List<Block>();
+
+        // Добавляем центральный блок, если он не под игроком
+        if (centerBlock != blockUnderPlayer)
+            waveBlocks.Add(centerBlock);
 
         // Добавляем до 2 блоков влево
         for (int i = 1; i <= 2; i++)
         {
             Vector3 leftPos = centerPos + Vector3.left * spacing * i;
             Block leftBlock = FindBlockAtPosition(leftPos);
-            if (leftBlock != null)
+            if (leftBlock != null && leftBlock != blockUnderPlayer)
                 waveBlocks.Add(leftBlock);
-            else
-                break; // если нет блока — дальше не ищем
+            else if (leftBlock == null)
+                break; // нет блока — дальше не продолжаем
         }
 
         // Добавляем до 2 блоков вправо
@@ -344,13 +348,13 @@ public class SwipeController : MonoBehaviour
         {
             Vector3 rightPos = centerPos + Vector3.right * spacing * i;
             Block rightBlock = FindBlockAtPosition(rightPos);
-            if (rightBlock != null)
+            if (rightBlock != null && rightBlock != blockUnderPlayer)
                 waveBlocks.Add(rightBlock);
-            else
+            else if (rightBlock == null)
                 break;
         }
 
-        // Сортируем блоки по расстоянию до центра (чтобы применить задержку)
+        // Сортируем блоки по расстоянию до центра (для задержки)
         waveBlocks = waveBlocks.OrderBy(b => Vector3.Distance(centerPos, b.transform.position)).ToList();
 
         for (int i = 0; i < waveBlocks.Count; i++)
