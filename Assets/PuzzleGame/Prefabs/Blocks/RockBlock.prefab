@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3537976501868259269
+--- !u!1 &3710348161090241330
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,25 +8,26 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8737344503446882852}
-  - component: {fileID: 7646528023952886128}
-  - component: {fileID: 8880559608470997056}
-  - component: {fileID: 2370512359315660427}
-  - component: {fileID: 7184401572993913236}
+  - component: {fileID: 3966351211591195404}
+  - component: {fileID: 5808066156610579223}
+  - component: {fileID: 5557591947990415357}
+  - component: {fileID: 7618057042721402359}
+  - component: {fileID: 8014404730173658470}
+  - component: {fileID: 8905135450685821650}
   m_Layer: 0
-  m_Name: Cube (1)
+  m_Name: RockBlock
   m_TagString: Block
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8737344503446882852
+--- !u!4 &3966351211591195404
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3537976501868259269}
+  m_GameObject: {fileID: 3710348161090241330}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.292, y: -1.74, z: -3.079}
@@ -35,21 +36,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &7646528023952886128
+--- !u!33 &5808066156610579223
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3537976501868259269}
+  m_GameObject: {fileID: 3710348161090241330}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &8880559608470997056
+--- !u!23 &5557591947990415357
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3537976501868259269}
+  m_GameObject: {fileID: 3710348161090241330}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -63,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 54eb0a880c35ecd4fa56b3b6c33e8aaa, type: 2}
+  - {fileID: 2100000, guid: 7aa97f5a6729cf64a947cdb263a1e2bf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -85,13 +86,13 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &2370512359315660427
+--- !u!65 &7618057042721402359
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3537976501868259269}
+  m_GameObject: {fileID: 3710348161090241330}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -106,20 +107,38 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7184401572993913236
+--- !u!114 &8014404730173658470
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3537976501868259269}
+  m_GameObject: {fileID: 3710348161090241330}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6ac2ed0c8c9e2354d8cdeae70879b53e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _particle: {fileID: 3371840155125065208, guid: b161fbfb297ded246b570430e0286f40, type: 3}
-  _blockType: 0
-  _health: 0
-  _hitSound: {fileID: 0}
+  _blockType: 1
+  _health: 3
+  _hitSound: {fileID: 8300000, guid: 0eea890a3873e864ea02558e731753b5, type: 3}
   whiteFlashMaterial: {fileID: 2100000, guid: d114cde0600508c4f9eed72b935654e6, type: 2}
+--- !u!114 &8905135450685821650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3710348161090241330}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 1
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []

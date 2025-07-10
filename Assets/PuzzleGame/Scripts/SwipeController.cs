@@ -29,6 +29,9 @@ public class SwipeController : MonoBehaviour
     private bool isSwiping;
     private string currentDirection;
 
+    private Block blockUnderPlayer;
+    private Outline currentOutline;
+    
     private Block currentHitBlock;
     
     private Animator animator;
@@ -38,6 +41,10 @@ public class SwipeController : MonoBehaviour
     private float attackCooldown = 1.8f;
     private float lastAttackTime = -Mathf.Infinity;
     
+    private bool isGrounded = false;
+    private bool isFalling = false;
+    public float groundCheckDistance = 0.2f;
+    
     public float effectOffsetX = 5f;
 
     private Vector3 lastHitPoint;
@@ -45,6 +52,7 @@ public class SwipeController : MonoBehaviour
     private Vector3 blockTopPoint;
     
     private Tween moveTween;
+    
 
     private void Start()
     {
@@ -54,6 +62,16 @@ public class SwipeController : MonoBehaviour
 
     private void Update()
     {
+        CheckBlockUnderPlayer();
+        CheckGrounded();
+
+        if (isFalling)
+        {
+            // Во время падения блокируем всё
+            return;
+        }
+
+        // ↓ Ввод обрабатываем только если не падаем
         Vector2 inputPos = Vector2.zero;
         bool isTouching = false;
 
@@ -388,6 +406,80 @@ public class SwipeController : MonoBehaviour
     public void SpawnStepParticleRight()
     {
         Instantiate(stepParticlePrefab, stepPointRight.position, stepPointRight.rotation);
+    }
+    
+    private void CheckBlockUnderPlayer()
+    {
+        Vector3 origin = transform.position + Vector3.up * 0.1f;
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 2f))
+        {
+            if (hit.collider.TryGetComponent(out Block block))
+            {
+                if (block != blockUnderPlayer)
+                {
+                    // Выключить outline на старом блоке
+                    if (blockUnderPlayer != null && currentOutline != null)
+                    {
+                        currentOutline.enabled = false;
+                    }
+
+                    // Включить outline на новом блоке
+                    blockUnderPlayer = block;
+                    currentOutline = blockUnderPlayer.GetComponent<Outline>();
+                    if (currentOutline != null)
+                        currentOutline.enabled = true;
+                }
+            }
+            else
+            {
+                // Если стоим не на блоке, выключаем предыдущий
+                if (blockUnderPlayer != null && currentOutline != null)
+                {
+                    currentOutline.enabled = false;
+                    currentOutline = null;
+                    blockUnderPlayer = null;
+                }
+            }
+        }
+        else
+        {
+            // Если не попали по блоку — сбрасываем
+            if (blockUnderPlayer != null && currentOutline != null)
+            {
+                currentOutline.enabled = false;
+                currentOutline = null;
+                blockUnderPlayer = null;
+            }
+        }
+    }
+    
+    private void CheckGrounded()
+    {
+        int playerLayer = LayerMask.NameToLayer("Player");
+        int layerMask = ~(1 << playerLayer);
+
+        Vector3 origin = transform.position + Vector3.up * 0.1f;
+        isGrounded = Physics.Raycast(origin, Vector3.down, groundCheckDistance, layerMask);
+
+        bool shouldFall = !isGrounded && rb.velocity.y < -0.1f;
+
+        if (shouldFall && !isFalling)
+        {
+            isFalling = true;
+            animator.SetBool("Fall", true);
+
+            // Принудительно сбросим ввод
+            currentDirection = null;
+            isSwiping = false;
+            ResetAnimator();
+            StopAttack();
+            rb.velocity = new Vector3(0, rb.velocity.y, 0);
+        }
+        else if (!shouldFall && isFalling)
+        {
+            isFalling = false;
+            animator.SetBool("Fall", false);
+        }
     }
 
 }

@@ -1,4 +1,5 @@
 using System;
+using PowerLines.Scripts;
 using UnityEngine;
 
 public enum BlockType
@@ -40,9 +41,18 @@ public class Block : MonoBehaviour
 
     public void Attack()
     {
+        MusicController.Instance.PlaySpecificSound(_hitSound);
         FlashWhite();
-        //Instantiate(_particle, transform.position, Quaternion.identity);
-        //gameObject.SetActive(false);
         _health--;
+        CheckBlockHealth();
+    }
+
+    private void CheckBlockHealth()
+    {
+        if (_health <= 0)
+        {
+            Instantiate(_particle, transform.position, Quaternion.identity);
+            gameObject.SetActive(false);
+        }
     }
 }
