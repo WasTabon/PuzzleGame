@@ -34,6 +34,8 @@ public class SwipeController : MonoBehaviour
     public GameObject attackEffectPrefab;
 
     private ParticlePool particlePool;
+    
+    private bool wasStandingOnBlock = false;
 
     private Vector2 startTouchPos;
     private bool isSwiping;
@@ -406,11 +408,14 @@ public class SwipeController : MonoBehaviour
     private void CheckBlockUnderPlayer()
     {
         Vector3 origin = transform.position + Vector3.up * 0.1f;
+        bool isStandingNow = false;
 
         if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 2f))
         {
             if (hit.collider.TryGetComponent(out Block block))
             {
+                isStandingNow = true;
+
                 if (block != blockUnderPlayer)
                 {
                     DisableCurrentOutline();
@@ -433,7 +438,19 @@ public class SwipeController : MonoBehaviour
             DisableCurrentOutline();
             UIController.Instance.SetBlockText();
         }
+        
+        if (isStandingNow && !wasStandingOnBlock)
+        {
+            UIController.Instance.ShowLadderButton();
+        }
+        else if (!isStandingNow && wasStandingOnBlock)
+        {
+            UIController.Instance.HideLadderButton();
+        }
+
+        wasStandingOnBlock = isStandingNow;
     }
+
 
     private void DisableCurrentOutline()
     {

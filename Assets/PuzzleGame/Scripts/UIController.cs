@@ -9,6 +9,8 @@ public class UIController : MonoBehaviour
 {
     public static UIController Instance;
 
+    [SerializeField] private RectTransform _ladderButton;
+    
     [SerializeField] private TextMeshProUGUI _blockTypeText;
     [SerializeField] private TextMeshProUGUI _attacksCountText;
 
@@ -72,6 +74,16 @@ public class UIController : MonoBehaviour
         titleText.text = "";
         button1.gameObject.SetActive(false);
         button2.gameObject.SetActive(false);
+    }
+
+    public void ShowLadderButton()
+    {
+        _ladderButton.DOAnchorPosY(0f, 0.4f).SetEase(Ease.OutBack);
+    }
+
+    public void HideLadderButton()
+    {
+        _ladderButton.DOAnchorPosY(-400f, 0.3f).SetEase(Ease.InBack);
     }
 
     private IEnumerator AnimatePanelContent()
