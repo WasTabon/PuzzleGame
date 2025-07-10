@@ -25,6 +25,8 @@ public class SwipeController : MonoBehaviour
     public Transform pickaxe;
     public GameObject attackEffectPrefab;
 
+    private ParticlePool particlePool;
+    
     private Vector2 startTouchPos;
     private bool isSwiping;
     private string currentDirection;
@@ -58,6 +60,8 @@ public class SwipeController : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
+        
+        particlePool = FindObjectOfType<ParticlePool>();
     }
 
     private void Update()
@@ -277,30 +281,29 @@ public class SwipeController : MonoBehaviour
     }
 
     public void SpawnAttackEffect()
+{
+    if (pickaxe != null)
     {
-        if (attackEffectPrefab != null && pickaxe != null)
+        transform.DOShakePosition(0.15f, new Vector3(0.1f, 0.1f, 0), vibrato: 10, randomness: 90);
+        Vector3 effectPos = new Vector3(
+            pickaxe.position.x + effectOffsetX,
+            (pickaxe.position.y + blockTopPoint.y) / 2f,
+            (pickaxe.position.z + blockTopPoint.z) / 2f
+        );
+
+        var effect = particlePool?.Spawn("attack", effectPos, Quaternion.identity);
+        StartCoroutine(DoHitStop(0.05f));
+
+        cameraShake.Shake(0.15f, 0.2f);
+
+        if (currentHitBlock != null)
         {
-            transform.DOShakePosition(0.15f, new Vector3(0.1f, 0.1f, 0), vibrato: 10, randomness: 90);
-            Vector3 effectPos = new Vector3(
-                pickaxe.position.x + effectOffsetX,
-                (pickaxe.position.y + blockTopPoint.y) / 2f,
-                (pickaxe.position.z + blockTopPoint.z) / 2f
-            );
-
-            Debug.Log("Spawn effect at " + effectPos);
-            Instantiate(attackEffectPrefab, effectPos, Quaternion.identity);
-            StartCoroutine(DoHitStop(0.05f));
-
-            cameraShake.Shake(0.15f, 0.2f);
-
-            if (currentHitBlock != null)
-            {
-                currentHitBlock.Attack();
-                AnimateWaveFromBlock(currentHitBlock);
-                currentHitBlock = null; // сбрасываем после использования
-            }
+            currentHitBlock.Attack();
+            AnimateWaveFromBlock(currentHitBlock);
+            currentHitBlock = null;
         }
     }
+}
     
     private IEnumerator DoHitStop(float duration)
     {
@@ -378,16 +381,12 @@ public class SwipeController : MonoBehaviour
     
     public void SpawnParticleAtTransform()
     {
-        if (particle != null && spawnPoint != null)
+        if (spawnPoint != null)
         {
-            Vector3 spawnPos = spawnPoint.position; // фиксируем позицию до Instantiate
-            Quaternion spawnRot = Quaternion.Euler(0, 0, -45); // фиксированное вращение
+            Vector3 spawnPos = spawnPoint.position;
+            Quaternion spawnRot = Quaternion.Euler(0, 0, -45);
 
-            Instantiate(particle, spawnPos, spawnRot);
-        }
-        else
-        {
-            Debug.LogWarning("SpawnParticleAtTransform: particle или spawnPoint не назначены");
+            particlePool?.Spawn("swipeParticle", spawnPos, spawnRot);
         }
     }
     
@@ -404,12 +403,12 @@ public class SwipeController : MonoBehaviour
     
     public void SpawnStepParticleLeft()
     {
-        Instantiate(stepParticlePrefab, stepPointLeft.position, stepPointLeft.rotation);
+        particlePool?.Spawn("stepLeft", stepPointLeft.position, stepPointLeft.rotation);
     }
-    
+
     public void SpawnStepParticleRight()
     {
-        Instantiate(stepParticlePrefab, stepPointRight.position, stepPointRight.rotation);
+        particlePool?.Spawn("stepRight", stepPointRight.position, stepPointRight.rotation);
     }
     
     private void CheckBlockUnderPlayer()

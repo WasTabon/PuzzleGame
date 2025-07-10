@@ -462,6 +462,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1177179133}
+  - {fileID: 691072799}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &581282726
@@ -521,6 +522,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f29bd46a3f105184ea986204983adcc1, type: 3}
+--- !u!1 &691072798
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 691072799}
+  - component: {fileID: 691072800}
+  m_Layer: 0
+  m_Name: ParticlePool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &691072799
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 691072798}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 478964979}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &691072800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 691072798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5b5868bfb164a1469c31e917c3f220b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  particlesToPool:
+  - key: stepLeft
+    prefab: {fileID: 5173427560926668776, guid: 880c519bb3845084fb22f3469527b782, type: 3}
+    initialSize: 3
+  - key: stepRight
+    prefab: {fileID: 5173427560926668776, guid: 880c519bb3845084fb22f3469527b782, type: 3}
+    initialSize: 3
+  - key: attack
+    prefab: {fileID: 1405538040440099740, guid: b00c9e850a6f592468405e09020ef94a, type: 3}
+    initialSize: 3
+  - key: swipeParticle
+    prefab: {fileID: 2607449349994212589, guid: 707a07fb631203d43b37deede9809382, type: 3}
+    initialSize: 3
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
