@@ -7,6 +7,8 @@ using DG.Tweening;
 [RequireComponent(typeof(Rigidbody))]
 public class SwipeController : MonoBehaviour
 {
+    [SerializeField] private int _attackCount;
+    
     [Header("Walk Step Particles")] public Transform stepPointLeft;
     public Transform stepPointRight;
     public GameObject stepParticlePrefab;
@@ -322,6 +324,17 @@ public class SwipeController : MonoBehaviour
             currentHitBlock.Attack();
             AnimateWaveFromBlock(currentHitBlock);
             currentHitBlock = null;
+        }
+
+        _attackCount--;
+        CheckAttackCount();
+    }
+
+    public void CheckAttackCount()
+    {
+        if (_attackCount <= 0)
+        {
+            
         }
     }
 
