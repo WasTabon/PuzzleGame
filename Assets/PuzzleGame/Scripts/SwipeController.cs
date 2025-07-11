@@ -13,6 +13,8 @@ public class SwipeController : MonoBehaviour
     [SerializeField] private GameObject pickaxeGameObject;
     
     [SerializeField] private GameObject ladderPrefab;
+
+    [SerializeField] private AudioClip _ladderPlaceSound;
     
     [SerializeField] private List<AudioClip> _walkSoundsDirt;
     [SerializeField] private List<AudioClip> _walkSoundsRock;
@@ -396,6 +398,7 @@ public class SwipeController : MonoBehaviour
     {
         if (blockUnderPlayer != null)
         {
+            MusicController.Instance.PlaySpecificSound(_ladderPlaceSound);
             // Получаем коллайдер блока
             Collider blockCollider = blockUnderPlayer.GetComponent<Collider>();
             if (blockCollider == null || ladderPrefab == null)
@@ -428,6 +431,7 @@ public class SwipeController : MonoBehaviour
         }
         else if (hasStartedClimbing && _currentLadder != null)
         {
+            MusicController.Instance.PlaySpecificSound(_ladderPlaceSound);
             // Новая логика для добавления лестницы над текущей лестницей
 
             Collider currentLadderCollider = _currentLadder.GetComponent<Collider>();

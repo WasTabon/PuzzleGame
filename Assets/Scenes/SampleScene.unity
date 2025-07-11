@@ -5501,6 +5501,10 @@ PrefabInstance:
       propertyPath: _attackCount
       value: 50
       objectReference: {fileID: 0}
+    - target: {fileID: 8685498016994501206, guid: 50e8cbac86367dc43968b938a4c039b2, type: 3}
+      propertyPath: _ladderPlaceSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 48b9529b25b10d84081affe98dbc4d61, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
