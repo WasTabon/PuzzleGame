@@ -3129,7 +3129,7 @@ GameObject:
   - component: {fileID: 3409404197656079873}
   m_Layer: 0
   m_Name: Ladder
-  m_TagString: Untagged
+  m_TagString: Ladder
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3275,8 +3275,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.6084988, y: 0.091272466, z: 3.9018369}
-  m_Center: {x: -0.0039824992, y: 0.0006277934, z: 1.9482}
+  m_Size: {x: 0.85, y: -1.5, z: 3.9018369}
+  m_Center: {x: -0.0039824992, y: 0.65, z: 1.9482}
 --- !u!1001 &9144092278668301894
 PrefabInstance:
   m_ObjectHideFlags: 0

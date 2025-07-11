@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using DG.Tweening;
 using PuzzleGame.Scripts;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(Rigidbody))]
 public class SwipeController : MonoBehaviour
@@ -68,6 +70,8 @@ public class SwipeController : MonoBehaviour
 
     private Vector3 cachedAttackEffectOffset;
 
+    private bool _isOnLadder;
+    
     private bool attackEffectOffsetCached = false;
 
     private void Start()
@@ -157,6 +161,22 @@ public class SwipeController : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter(Collider coll)
+    {
+        if (coll.gameObject.CompareTag("Ladder"))
+        {
+            _isOnLadder = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider coll)
+    {
+        if (coll.gameObject.CompareTag("Ladder"))
+        {
+            _isOnLadder = false;
+        }
+    }
+
     private string GetSwipeDirection(Vector2 delta)
     {
         return Mathf.Abs(delta.x) > Mathf.Abs(delta.y)
@@ -234,6 +254,18 @@ public class SwipeController : MonoBehaviour
         animator.SetBool("MoveLeft", false);
         animator.SetBool("MoveRight", false);
         animator.SetBool("Attack", false);
+    }
+
+    public void PlaceLadder()
+    {
+        if (blockUnderPlayer != null)
+        {
+            
+        }
+        else if (_isOnLadder)
+        {
+            
+        }
     }
 
     private void TryAttackDownward()
