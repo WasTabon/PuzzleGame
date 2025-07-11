@@ -71,6 +71,10 @@ public class SwipeController : MonoBehaviour
     
     private bool _isNearLadder = false;
     
+    private bool isLadderMoving = false;
+    
+    private bool hasStartedClimbing = false;
+    
     private Tween rotationTween;
     private float ladderFaceY = 0f;
     private float normalFaceY = 180f;
@@ -114,69 +118,54 @@ public class SwipeController : MonoBehaviour
 
         if (_isOnLadder)
         {
-            rb.useGravity = false;
+            Vector3 direction = Vector3.zero;
 
-            if (pickaxeGameObject != null && pickaxeGameObject.activeSelf)
-                pickaxeGameObject.SetActive(false);
-
-            // Движение по лестнице
-            if (!string.IsNullOrEmpty(currentDirection))
+            switch (currentDirection)
             {
-                ladderMoveDirection = Vector3.zero;
+                case "Up": direction = Vector3.up; break;
+                case "Down": direction = Vector3.down; break;
+                case "Left": direction = Vector3.left; break;
+                case "Right": direction = Vector3.right; break;
+            }
 
-                switch (currentDirection)
-                {
-                    case "Up": ladderMoveDirection = Vector3.up; break;
-                    case "Down": ladderMoveDirection = Vector3.down; break;
-                    case "Left": ladderMoveDirection = Vector3.left; break;
-                    case "Right": ladderMoveDirection = Vector3.right; break;
-                }
+            if (direction == Vector3.up && !hasStartedClimbing)
+            {
+                StartClimbingLadder();
+                hasStartedClimbing = true;
+            }
+            else if (hasStartedClimbing && direction != Vector3.zero)
+            {
+                ladderMoveDirection = direction;
+                rb.velocity = ladderMoveDirection * (moveSpeed / 2f);
 
-                animator.SetBool("Ladder", false);
                 animator.SetBool("LadderMove", true);
-
-                // ✅ Только в момент начала движения вызываем поворот
-                if (!isClimbingLadder && blockUnderPlayer == null)
-                {
-                    isClimbingLadder = true;
-                    RotateToY(ladderFaceY);
-                }
+                animator.SetBool("Ladder", false);
+            }
+            else if (_isOnLadder && blockUnderPlayer == null)
+            {
+                animator.SetBool("LadderMove", false);
+                animator.SetBool("Ladder", false);
+                StopClimbingLadder();
             }
             else
             {
-                ladderMoveDirection = Vector3.zero;
-
-                animator.SetBool("LadderMove", false);
-
                 if (blockUnderPlayer == null)
                 {
-                    animator.SetBool("Ladder", true);
+                    ladderMoveDirection = Vector3.zero;
+                    rb.velocity = Vector3.zero;
+
+                    animator.SetBool("LadderMove", false);
+                    animator.SetBool("Ladder", blockUnderPlayer == null);
                 }
                 else
                 {
+                    animator.SetBool("LadderMove", false);
                     animator.SetBool("Ladder", false);
+                    StopClimbingLadder();
                 }
             }
-
-            rb.velocity = ladderMoveDirection * (moveSpeed / 2);
         }
-        else
-        {
-            rb.useGravity = true;
 
-            if (pickaxeGameObject != null && !pickaxeGameObject.activeSelf)
-                pickaxeGameObject.SetActive(true);
-
-            animator.SetBool("Ladder", false);
-            animator.SetBool("LadderMove", false);
-
-            // ✅ Только в момент выхода с лестницы сбрасываем и разворачиваем
-            if (isClimbingLadder)
-            {
-                isClimbingLadder = false;
-                RotateToY(normalFaceY);
-            }
-        }
         
         bool isTouching = Input.touchCount > 0 || Input.GetMouseButton(0);
         Vector2 inputPos = Input.touchCount > 0 ? (Vector2)Input.GetTouch(0).position : (Vector2)Input.mousePosition;
@@ -257,7 +246,35 @@ public class SwipeController : MonoBehaviour
         if (coll.gameObject.CompareTag("Ladder"))
         {
             _isOnLadder = false;
+            StopClimbingLadder();
+
+            animator.SetBool("Ladder", false);
+            animator.SetBool("LadderMove", false);
         }
+    }
+    
+    private void StartClimbingLadder()
+    {
+        isClimbingLadder = true;
+        rb.useGravity = false;
+
+        if (pickaxeGameObject != null && pickaxeGameObject.activeSelf)
+            pickaxeGameObject.SetActive(false);
+
+        RotateToY(ladderFaceY);
+    }
+
+    private void StopClimbingLadder()
+    {
+        isClimbingLadder = false;
+        hasStartedClimbing = false;
+
+        rb.useGravity = true;
+
+        if (pickaxeGameObject != null && !pickaxeGameObject.activeSelf)
+            pickaxeGameObject.SetActive(true);
+
+        RotateToY(normalFaceY);
     }
     
     private void RotateToY(float targetY)
@@ -284,7 +301,7 @@ public class SwipeController : MonoBehaviour
 
     private void HandleSwipe(string direction)
     {
-        if (_isOnLadder)
+        if (hasStartedClimbing)
         {
             return;
         }
