@@ -59186,6 +59186,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pickaxeGameObject: {fileID: 629573519884055722}
   ladderPrefab: {fileID: 5665506793695307944, guid: 91135ac538662de4dbcf572de24b8da9, type: 3}
+  _ladderPlaceSound: {fileID: 8300000, guid: 48b9529b25b10d84081affe98dbc4d61, type: 3}
   _walkSoundsDirt:
   - {fileID: 8300000, guid: 9ea11a2d13d536e4e8441a0f5895995c, type: 3}
   - {fileID: 8300000, guid: 203ac8b6f07070e4f93f1c1a6fff06c3, type: 3}
@@ -59232,7 +59233,7 @@ MonoBehaviour:
   _landSoundDirt: {fileID: 8300000, guid: 7131d701ae015a54aa3d856feccd513f, type: 3}
   _landSoundRock: {fileID: 8300000, guid: 3d8f480d252db9449b2f978284506f8e, type: 3}
   _landSoundMetal: {fileID: 8300000, guid: 37cdbcb02c3324849ac457dfc5b1058e, type: 3}
-  _attackCount: 3
+  _attackCount: 50
   stepPointLeft: {fileID: 3173527867171855040}
   stepPointRight: {fileID: 3758912929525337189}
   stepParticlePrefab: {fileID: 5173427560926668776, guid: 880c519bb3845084fb22f3469527b782, type: 3}
