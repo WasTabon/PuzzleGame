@@ -10,6 +10,8 @@ using Random = UnityEngine.Random;
 [RequireComponent(typeof(Rigidbody))]
 public class SwipeController : MonoBehaviour
 {
+    [SerializeField] private GameObject ladderPrefab;
+    
     [SerializeField] private List<AudioClip> _walkSoundsDirt;
     [SerializeField] private List<AudioClip> _walkSoundsRock;
     [SerializeField] private List<AudioClip> _walkSoundsMetal;
@@ -260,11 +262,39 @@ public class SwipeController : MonoBehaviour
     {
         if (blockUnderPlayer != null)
         {
-            
+            // Получаем коллайдер блока
+            Collider blockCollider = blockUnderPlayer.GetComponent<Collider>();
+            if (blockCollider == null || ladderPrefab == null)
+                return;
+
+            // Верхняя точка блока по Y
+            float blockTopY = blockCollider.bounds.max.y;
+
+            // Центр блока по X
+            float centerX = blockCollider.bounds.center.x;
+
+            // Самая крайняя верхняя точка по Z (максимум Z)
+            float frontZ = blockCollider.bounds.max.z;
+
+            // Получаем высоту префаба лестницы
+            Collider ladderCollider = ladderPrefab.GetComponent<Collider>();
+            if (ladderCollider == null)
+                return;
+
+            float ladderHeight = ladderCollider.bounds.size.y;
+
+            // Нижняя точка лестницы должна совпасть с верхом блока
+            float ladderBottomY = blockTopY;
+            float ladderCenterY = ladderBottomY + ladderHeight / 2f;
+
+            Vector3 spawnPosition = new Vector3(centerX, ladderCenterY, frontZ);
+            Quaternion spawnRotation = Quaternion.Euler(270f, 0f, 0f);
+
+            Instantiate(ladderPrefab, spawnPosition, spawnRotation);
         }
         else if (_isOnLadder)
         {
-            
+            // Тут можно реализовать спуск или другой функционал
         }
     }
 
@@ -283,7 +313,7 @@ public class SwipeController : MonoBehaviour
 
         Vector3 rayOrigin = handTransform.position + Vector3.up * 0.1f;
 
-        if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, 20f, nonPlayerLayerMask))
+        if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, 0.9f, nonPlayerLayerMask))
         {
             if (hit.collider.TryGetComponent(out Block block))
             {
@@ -442,7 +472,7 @@ public class SwipeController : MonoBehaviour
         Vector3 origin = transform.position + Vector3.up * 0.1f;
         bool isStandingNow = false;
 
-        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 2f))
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 0.11f))
         {
             if (hit.collider.TryGetComponent(out Block block))
             {
@@ -607,11 +637,22 @@ public class SwipeController : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        float rayDistance = 20f;
-        Vector3 rayDirection = Vector3.down;
-        Gizmos.color = Color.green;
         if (handTransform != null)
-            Gizmos.DrawRay(handTransform.position, rayDirection * rayDistance);
-    }
+        {
+            float rayDistance = 0.9f;
+            Vector3 rayDirection = Vector3.down;
+            Vector3 rayOrigin = handTransform.position + Vector3.up * 0.1f;
+        
+            Gizmos.color = Color.green;
+            Gizmos.DrawRay(rayOrigin, rayDirection * rayDistance);
+        }
 
+        {
+            float checkDistance = 0.11f;
+            Vector3 origin = transform.position + Vector3.up * 0.1f;
+
+            Gizmos.color = Color.yellow; // Отличающийся цвет
+            Gizmos.DrawRay(origin, Vector3.down * checkDistance);
+        }
+    }
 }
