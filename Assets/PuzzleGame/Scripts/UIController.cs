@@ -14,6 +14,18 @@ public class UIController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _blockTypeText;
     [SerializeField] private TextMeshProUGUI _attacksCountText;
 
+    [Header("Win Panel Elements")]
+    [SerializeField] private GameObject winPanelParent;
+    [SerializeField] private RectTransform winPanel;
+    [SerializeField] private TextMeshProUGUI winText;
+    [SerializeField] private Button winButton;
+
+    [Header("Loose Panel Elements")]
+    [SerializeField] private GameObject loosePanelParent;
+    [SerializeField] private RectTransform loosePanel;
+    [SerializeField] private TextMeshProUGUI looseText;
+    [SerializeField] private Button looseButton;
+    
     [Header("Panel Elements")]
     [SerializeField] private GameObject parentPanel;
     [SerializeField] private RectTransform panel;
@@ -84,6 +96,67 @@ public class UIController : MonoBehaviour
     public void HideLadderButton()
     {
         _ladderButton.DOAnchorPosY(-400f, 0.3f).SetEase(Ease.InBack);
+    }
+    
+    public void ShowWinPanel()
+    {
+        ShowGenericPanel(
+            winPanelParent, 
+            winPanel, 
+            winText, 
+            "You Win!", 
+            winButton
+        );
+    }
+
+    public void ShowLoosePanel()
+    {
+        ShowGenericPanel(
+            loosePanelParent, 
+            loosePanel, 
+            looseText, 
+            "You Lost", 
+            looseButton
+        );
+    }
+    
+    private void ShowGenericPanel(GameObject panelParent, RectTransform panelRect, TextMeshProUGUI textElement, string message, Button button)
+    {
+        panelParent.SetActive(true);
+        panelRect.anchoredPosition = new Vector2(Screen.width, 0);
+
+        MusicController.Instance.PlaySpecificSound(panelSlideSound);
+
+        panelRect.DOAnchorPos(Vector2.zero, 0.5f).SetEase(Ease.OutBack).OnComplete(() =>
+        {
+            StartCoroutine(AnimateGenericPanelContent(textElement, message, button));
+        });
+
+        textElement.text = "";
+        button.gameObject.SetActive(false);
+    }
+    
+    private IEnumerator AnimateGenericPanelContent(TextMeshProUGUI textElement, string fullText, Button button)
+    {
+        for (int i = 0; i < fullText.Length; i++)
+        {
+            textElement.text += fullText[i];
+            textElement.ForceMeshUpdate();
+
+            if (panelTextCharSound != null)
+                MusicController.Instance.PlaySpecificSound(panelTextCharSound);
+
+            yield return new WaitForSeconds(0.03f);
+        }
+
+        yield return new WaitForSeconds(0.2f);
+
+        button.gameObject.SetActive(true);
+        button.transform.localScale = Vector3.zero;
+        button.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
+
+        if (button1AppearSound != null) // можно заменить на отдельный звук, если есть
+            MusicController.Instance.PlaySpecificSound(button1AppearSound);
     }
 
     private IEnumerator AnimatePanelContent()
