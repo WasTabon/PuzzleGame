@@ -10,6 +10,8 @@ using Random = UnityEngine.Random;
 [RequireComponent(typeof(Rigidbody))]
 public class SwipeController : MonoBehaviour
 {
+    [SerializeField] private GameObject pickaxeGameObject;
+    
     [SerializeField] private GameObject ladderPrefab;
     
     [SerializeField] private List<AudioClip> _walkSoundsDirt;
@@ -64,6 +66,15 @@ public class SwipeController : MonoBehaviour
     public float effectOffsetX = 5f;
 
     private Tween moveTween;
+    
+    private bool isClimbingLadder = false;
+    
+    private Tween rotationTween;
+    private float ladderFaceY = 0f;
+    private float normalFaceY = 180f;
+    private float rotateDuration = 0.3f;
+
+    private bool wasOnLadder = false;
 
     private int playerLayer;
     private int nonPlayerLayerMask;
@@ -71,6 +82,8 @@ public class SwipeController : MonoBehaviour
     private float checkInterval = 0.1f;
 
     private Vector3 cachedAttackEffectOffset;
+    
+    private Vector3 ladderMoveDirection = Vector3.zero;
 
     private bool _isOnLadder;
     
@@ -97,6 +110,72 @@ public class SwipeController : MonoBehaviour
         if (isFalling)
             return;
 
+        if (_isOnLadder)
+        {
+            rb.useGravity = false;
+
+            if (pickaxeGameObject != null && pickaxeGameObject.activeSelf)
+                pickaxeGameObject.SetActive(false);
+
+            // Движение по лестнице
+            if (!string.IsNullOrEmpty(currentDirection))
+            {
+                ladderMoveDirection = Vector3.zero;
+
+                switch (currentDirection)
+                {
+                    case "Up": ladderMoveDirection = Vector3.up; break;
+                    case "Down": ladderMoveDirection = Vector3.down; break;
+                    case "Left": ladderMoveDirection = Vector3.left; break;
+                    case "Right": ladderMoveDirection = Vector3.right; break;
+                }
+
+                animator.SetBool("Ladder", false);
+                animator.SetBool("LadderMove", true);
+
+                // ✅ Только в момент начала движения вызываем поворот
+                if (!isClimbingLadder)
+                {
+                    isClimbingLadder = true;
+                    RotateToY(ladderFaceY);
+                }
+            }
+            else
+            {
+                ladderMoveDirection = Vector3.zero;
+
+                animator.SetBool("LadderMove", false);
+
+                if (blockUnderPlayer == null)
+                {
+                    animator.SetBool("Ladder", true);
+                }
+                else
+                {
+                    animator.SetBool("Ladder", false);
+                }
+            }
+
+            rb.velocity = ladderMoveDirection * (moveSpeed / 2);
+        }
+        else
+        {
+            rb.useGravity = true;
+
+            if (pickaxeGameObject != null && !pickaxeGameObject.activeSelf)
+                pickaxeGameObject.SetActive(true);
+
+            animator.SetBool("Ladder", false);
+            animator.SetBool("LadderMove", false);
+
+            // ✅ Только в момент выхода с лестницы сбрасываем и разворачиваем
+            if (isClimbingLadder)
+            {
+                isClimbingLadder = false;
+                RotateToY(normalFaceY);
+            }
+        }
+        
         bool isTouching = Input.touchCount > 0 || Input.GetMouseButton(0);
         Vector2 inputPos = Input.touchCount > 0 ? (Vector2)Input.GetTouch(0).position : (Vector2)Input.mousePosition;
 
@@ -178,6 +257,21 @@ public class SwipeController : MonoBehaviour
             _isOnLadder = false;
         }
     }
+    
+    private void RotateToY(float targetY)
+    {
+        if (rotationTween != null && rotationTween.IsActive())
+            rotationTween.Kill();
+
+        Quaternion startRot = transform.rotation;
+        Quaternion endRot = Quaternion.Euler(0f, targetY, 0f);
+
+        rotationTween = DOTween.To(() => 0f, t =>
+        {
+            transform.rotation = Quaternion.Slerp(startRot, endRot, t);
+        }, 1f, rotateDuration).SetEase(Ease.OutSine);
+    }
+
 
     private string GetSwipeDirection(Vector2 delta)
     {
@@ -188,6 +282,11 @@ public class SwipeController : MonoBehaviour
 
     private void HandleSwipe(string direction)
     {
+        if (_isOnLadder)
+        {
+            return;
+        }
+
         if (direction == "Down")
         {
             TryAttackDownward();

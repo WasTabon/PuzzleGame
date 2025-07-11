@@ -2570,6 +2570,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1294838685}
   m_CullTransparentMesh: 1
+--- !u!1 &1582195494 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 629573519884055722, guid: 50e8cbac86367dc43968b938a4c039b2, type: 3}
+  m_PrefabInstance: {fileID: 9144092278668301894}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1649871074
 GameObject:
   m_ObjectHideFlags: 0
@@ -3256,6 +3261,10 @@ PrefabInstance:
       propertyPath: ladderPrefab
       value: 
       objectReference: {fileID: 5665506793695307944, guid: 91135ac538662de4dbcf572de24b8da9, type: 3}
+    - target: {fileID: 8685498016994501206, guid: 50e8cbac86367dc43968b938a4c039b2, type: 3}
+      propertyPath: pickaxeGameObject
+      value: 
+      objectReference: {fileID: 1582195494}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
