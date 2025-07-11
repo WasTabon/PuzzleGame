@@ -248,9 +248,7 @@ public class SwipeController : MonoBehaviour
     {
         if (coll.gameObject.CompareTag("Ladder"))
         {
-            _isNearLadder = true;
-            // Можно показать UI, что можно начать лезть
-            UIController.Instance.ShowLadderButton();
+            _isOnLadder = true;
         }
     }
 
@@ -258,28 +256,7 @@ public class SwipeController : MonoBehaviour
     {
         if (coll.gameObject.CompareTag("Ladder"))
         {
-            _isNearLadder = false;
-
-            // Если игрок был на лестнице и вышел из зоны — сбросить состояние подъёма
-            if (isClimbingLadder)
-            {
-                isClimbingLadder = false;
-                // Возврат поворота при выходе из зоны лестницы
-                RotateToY(normalFaceY);
-
-                // Восстановить гравитацию и активировать пиксель
-                rb.useGravity = true;
-
-                if (pickaxeGameObject != null && !pickaxeGameObject.activeSelf)
-                    pickaxeGameObject.SetActive(true);
-
-                // Сброс анимаций лестницы
-                animator.SetBool("Ladder", false);
-                animator.SetBool("LadderMove", false);
-            }
-
-            // Скрыть UI
-            UIController.Instance.HideLadderButton();
+            _isOnLadder = false;
         }
     }
     
