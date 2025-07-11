@@ -17,6 +17,7 @@ public class SwipeController : MonoBehaviour
     [SerializeField] private List<AudioClip> _walkSoundsDirt;
     [SerializeField] private List<AudioClip> _walkSoundsRock;
     [SerializeField] private List<AudioClip> _walkSoundsMetal;
+    [SerializeField] private List<AudioClip> _walkSoundsWood;
     
     [SerializeField] private AudioClip _landSoundDirt;
     [SerializeField] private AudioClip _landSoundRock;
@@ -80,6 +81,9 @@ public class SwipeController : MonoBehaviour
     private float normalFaceY = 180f;
     private float rotateDuration = 0.3f;
 
+    private float lastLadderStepSoundTime = 0f;
+    private float ladderStepSoundInterval = 0.3f;
+    
     private bool wasOnLadder = false;
 
     private int playerLayer;
@@ -94,6 +98,8 @@ public class SwipeController : MonoBehaviour
     private bool _isOnLadder;
     
     private bool attackEffectOffsetCached = false;
+
+    private Transform _currentLadder;
 
     private void Start()
     {
@@ -140,8 +146,16 @@ public class SwipeController : MonoBehaviour
 
                 animator.SetBool("LadderMove", true);
                 animator.SetBool("Ladder", false);
+
+                // Воспроизводим звук шагов на лестнице раз в 0.1 сек
+                if (Time.time >= lastLadderStepSoundTime + ladderStepSoundInterval && _walkSoundsWood.Count > 0)
+                {
+                    int randomSound = Random.Range(0, _walkSoundsWood.Count);
+                    MusicController.Instance.PlaySpecificSound(_walkSoundsWood[randomSound]);
+                    lastLadderStepSoundTime = Time.time;
+                }
             }
-            else if (_isOnLadder && blockUnderPlayer == null)
+            else if (_isOnLadder && !hasStartedClimbing && blockUnderPlayer == null)
             {
                 animator.SetBool("LadderMove", false);
                 animator.SetBool("Ladder", false);
@@ -233,11 +247,12 @@ public class SwipeController : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider coll)
+    private void OnTriggerStay(Collider coll)
     {
         if (coll.gameObject.CompareTag("Ladder"))
         {
             _isOnLadder = true;
+            _currentLadder = coll.gameObject.transform;
         }
     }
 
@@ -246,6 +261,7 @@ public class SwipeController : MonoBehaviour
         if (coll.gameObject.CompareTag("Ladder"))
         {
             _isOnLadder = false;
+            _currentLadder = null;
             StopClimbingLadder();
 
             animator.SetBool("Ladder", false);
@@ -410,9 +426,33 @@ public class SwipeController : MonoBehaviour
 
             Instantiate(ladderPrefab, spawnPosition, spawnRotation);
         }
-        else if (_isOnLadder)
+        else if (hasStartedClimbing && _currentLadder != null)
         {
-            // Тут можно реализовать спуск или другой функционал
+            // Новая логика для добавления лестницы над текущей лестницей
+
+            Collider currentLadderCollider = _currentLadder.GetComponent<Collider>();
+            Collider ladderCollider = ladderPrefab.GetComponent<Collider>();
+
+            if (currentLadderCollider == null || ladderCollider == null || ladderPrefab == null)
+                return;
+
+            // Верхняя точка текущей лестницы
+            float currentLadderTopY = currentLadderCollider.bounds.max.y;
+
+            // Высота новой лестницы
+            float ladderHeight = ladderCollider.bounds.size.y;
+
+            // Нижняя точка новой лестницы должна совпасть с верхней точкой текущей лестницы
+            float ladderBottomY = currentLadderTopY;
+            float ladderCenterY = ladderBottomY + ladderHeight / 2f;
+
+            // Позиция по X и Z берём из текущей лестницы (чтобы не сместить)
+            Vector3 ladderPosXZ = new Vector3(_currentLadder.position.x, 0f, _currentLadder.position.z);
+
+            Vector3 spawnPosition = new Vector3(ladderPosXZ.x, ladderCenterY, ladderPosXZ.z);
+            Quaternion spawnRotation = Quaternion.Euler(270f, 0f, 0f);
+
+            Instantiate(ladderPrefab, spawnPosition, spawnRotation);
         }
     }
 
@@ -623,7 +663,7 @@ public class SwipeController : MonoBehaviour
         {
             UIController.Instance.ShowLadderButton();
         }
-        else if (!isStandingNow && wasStandingOnBlock)
+        else if (!isStandingNow && wasStandingOnBlock && !_isOnLadder)
         {
             UIController.Instance.HideLadderButton();
         }
