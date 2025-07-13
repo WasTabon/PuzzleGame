@@ -59,7 +59,7 @@ public class SwipeController : MonoBehaviour
     private Rigidbody rb;
 
     private bool isAttacking = false;
-    private float attackCooldown = 1.5f;
+    private float attackCooldown = 1.05f;
     private float lastAttackTime = -Mathf.Infinity;
 
     private bool isGrounded = false;
