@@ -10,6 +10,8 @@ using Random = UnityEngine.Random;
 [RequireComponent(typeof(Rigidbody))]
 public class SwipeController : MonoBehaviour
 {
+    public static SwipeController Instance;
+    
     [SerializeField] private GameObject pickaxeGameObject;
     
     [SerializeField] private GameObject ladderPrefab;
@@ -25,7 +27,7 @@ public class SwipeController : MonoBehaviour
     [SerializeField] private AudioClip _landSoundRock;
     [SerializeField] private AudioClip _landSoundMetal;
     
-    [SerializeField] private int _attackCount;
+    public int _attackCount;
     
     [Header("Walk Step Particles")] public Transform stepPointLeft;
     public Transform stepPointRight;
@@ -102,6 +104,11 @@ public class SwipeController : MonoBehaviour
     private bool attackEffectOffsetCached = false;
 
     private Transform _currentLadder;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
