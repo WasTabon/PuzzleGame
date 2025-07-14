@@ -14,6 +14,13 @@ public class MenuLoaderController : MonoBehaviour
     {
         SceneManager.LoadScene("Levels");
     }
-    
-    
+
+    public void LoadWinMenu()
+    {
+        string level = PlayerPrefs.GetString("currentLevel");
+        PlayerPrefs.SetString("winLevel", level);
+        PlayerPrefs.Save();
+        
+        SceneManager.LoadScene("Levels");
+    }
 }
