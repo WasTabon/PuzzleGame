@@ -24,7 +24,6 @@ public class BuyController : MonoBehaviour
             MusicController.Instance.PlaySpecificSound(buySound);
             loadingButton.SetActive(false);
             panel.SetActive(true);
-            buyPanel.SetActive(false);
         }
     }
     public void OnPurchaseFailed(Product product, PurchaseFailureDescription description)
