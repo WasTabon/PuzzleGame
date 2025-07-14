@@ -7,17 +7,25 @@ public class ScrollViewSnapController : MonoBehaviour
     [SerializeField] private ScrollRect scrollRect;
     [SerializeField] private RectTransform content;
     [SerializeField] private int totalItems = 5;
-    [SerializeField] private int visibleIndex = 0;
+    [SerializeField] private float scrollDuration = 0.3f;
+    [SerializeField] private float scrollDurationAnimated = 0.1f;
 
-    [SerializeField] private float scrollDuration = 0.3f; // длительность анимации
-
+    private int visibleIndex = 0;
     private float stepSize;
     private Tween scrollTween;
+
+    private const string PlayerPrefsKey = "ScrollViewVisibleIndex";
 
     private void Start()
     {
         stepSize = 1f / (totalItems - 1);
-        SnapToIndex(visibleIndex, true); // без анимации при старте
+
+        // Загружаем сохранённый индекс
+        visibleIndex = PlayerPrefs.GetInt(PlayerPrefsKey, 0);
+        visibleIndex = Mathf.Clamp(visibleIndex, 0, totalItems - 1);
+
+        // Стартовая быстрая анимация "пролистывания" к сохранённому индексу
+        StartCoroutine(ScrollToIndexAnimated(visibleIndex));
     }
 
     public void ScrollLeft()
@@ -26,6 +34,7 @@ public class ScrollViewSnapController : MonoBehaviour
         {
             visibleIndex--;
             SnapToIndex(visibleIndex);
+            SaveIndex();
         }
     }
 
@@ -35,6 +44,7 @@ public class ScrollViewSnapController : MonoBehaviour
         {
             visibleIndex++;
             SnapToIndex(visibleIndex);
+            SaveIndex();
         }
     }
 
@@ -42,7 +52,6 @@ public class ScrollViewSnapController : MonoBehaviour
     {
         float targetPosition = stepSize * index;
 
-        // Отменяем предыдущую анимацию, если она есть
         if (scrollTween != null && scrollTween.IsActive())
             scrollTween.Kill();
 
@@ -58,6 +67,21 @@ public class ScrollViewSnapController : MonoBehaviour
                 targetPosition,
                 scrollDuration
             ).SetEase(Ease.OutCubic);
+        }
+    }
+
+    private void SaveIndex()
+    {
+        PlayerPrefs.SetInt(PlayerPrefsKey, visibleIndex);
+        PlayerPrefs.Save();
+    }
+
+    private System.Collections.IEnumerator ScrollToIndexAnimated(int targetIndex)
+    {
+        for (int i = 0; i <= targetIndex; i++)
+        {
+            SnapToIndex(i);
+            yield return new WaitForSeconds(scrollDurationAnimated * 0.75f); // немного быстрее
         }
     }
 }

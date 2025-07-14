@@ -2062,8 +2062,8 @@ MonoBehaviour:
   scrollRect: {fileID: 1010543457}
   content: {fileID: 557800081}
   totalItems: 5
-  visibleIndex: 0
   scrollDuration: 0.3
+  scrollDurationAnimated: 0.15
 --- !u!1 &1033357171
 GameObject:
   m_ObjectHideFlags: 0
