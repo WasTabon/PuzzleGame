@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -12,6 +13,9 @@ public class ScrollViewSnapController : MonoBehaviour
     [SerializeField] private float scrollDurationAnimated = 0.1f;
     [SerializeField] private AudioClip starSound;
 
+    private HashSet<int> completedLevels = new HashSet<int>();
+    private const string CompletedLevelsKey = "CompletedLevels";
+    
     private int visibleIndex = 0;
     private float stepSize;
     private Tween scrollTween;
@@ -24,11 +28,14 @@ public class ScrollViewSnapController : MonoBehaviour
     {
         stepSize = 1f / (totalItems - 1);
 
+        LoadCompletedLevels();
+
         visibleIndex = PlayerPrefs.GetInt(PlayerPrefsKey, 0);
         visibleIndex = Mathf.Clamp(visibleIndex, 0, totalItems - 1);
 
         LoadLevel();
-        
+
+        ShowCompletedStars(); // <-- ДОБАВЛЕНО
         StartCoroutine(ScrollToIndexAnimated(visibleIndex));
     }
 
@@ -89,28 +96,36 @@ public class ScrollViewSnapController : MonoBehaviour
             if (level == winLevel)
             {
                 _isWin = true;
+                PlayerPrefs.SetString("currentLevel", "123");
+                PlayerPrefs.SetString("winLevel", "321");
             }
         }
     }
 
     private void AnimateLevelStars()
     {
-        Transform[] allChildren = content.GetComponentsInChildren<Transform>(true);
+        if (!completedLevels.Contains(visibleIndex))
+        {
+            completedLevels.Add(visibleIndex);
+            SaveCompletedLevels();
+        }
+
+        Transform levelItem = content.GetChild(visibleIndex);
+        Transform[] stars = levelItem.GetComponentsInChildren<Transform>(true);
+
         Sequence sequence = DOTween.Sequence();
 
-        foreach (Transform child in allChildren)
+        foreach (Transform star in stars)
         {
-            if (child.CompareTag("Star"))
+            if (star.CompareTag("Star"))
             {
-                Image starImage = child.GetComponent<Image>();
+                Image starImage = star.GetComponent<Image>();
                 if (starImage != null)
                 {
-                    // Ставим начальный размер в 0
-                    child.localScale = Vector3.zero;
+                    star.localScale = Vector3.zero;
 
-                    // Добавляем анимацию в последовательность
                     sequence.Append(
-                        child.DOScale(Vector3.one, 0.3f)
+                        star.DOScale(Vector3.one, 0.3f)
                             .SetEase(Ease.OutBack)
                             .OnStart(() =>
                             {
@@ -118,8 +133,54 @@ public class ScrollViewSnapController : MonoBehaviour
                             })
                     );
 
-                    // Можно добавить небольшую паузу между звездами
                     sequence.AppendInterval(0.1f);
+                }
+            }
+        }
+    }
+    
+    private void SaveCompletedLevels()
+    {
+        string save = string.Join(",", completedLevels);
+        PlayerPrefs.SetString(CompletedLevelsKey, save);
+        PlayerPrefs.Save();
+    }
+    
+    private void LoadCompletedLevels()
+    {
+        completedLevels.Clear();
+
+        if (PlayerPrefs.HasKey(CompletedLevelsKey))
+        {
+            string save = PlayerPrefs.GetString(CompletedLevelsKey);
+            string[] levels = save.Split(',');
+
+            foreach (string s in levels)
+            {
+                if (int.TryParse(s, out int levelIndex))
+                {
+                    completedLevels.Add(levelIndex);
+                }
+            }
+        }
+    }
+    
+    private void ShowCompletedStars()
+    {
+        Transform[] allChildren = content.GetComponentsInChildren<Transform>(true);
+
+        for (int i = 0; i < totalItems; i++)
+        {
+            if (!completedLevels.Contains(i)) continue;
+
+            Transform levelItem = content.GetChild(i);
+
+            Transform[] stars = levelItem.GetComponentsInChildren<Transform>(true);
+            foreach (Transform star in stars)
+            {
+                if (star.CompareTag("Star"))
+                {
+                    star.localScale = Vector3.one;
                 }
             }
         }
