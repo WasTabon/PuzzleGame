@@ -50,7 +50,7 @@ public class UIController : MonoBehaviour
 
     public void SetAttacksText(int attacksCount)
     {
-        _attacksCountText.text = $"Smashes: {attacksCount.ToString()}";
+        _attacksCountText.text = $"{attacksCount.ToString()}";
     }
 
     public void SetBlockText()
