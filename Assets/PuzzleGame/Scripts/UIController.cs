@@ -24,6 +24,8 @@ public class UIController : MonoBehaviour
 
     [Header("Loose Panel Elements")]
     [SerializeField] private GameObject loosePanelParent;
+    [SerializeField] private Image loosePickaxeImage;
+    [SerializeField] private Image[] looseStars;
     [SerializeField] private RectTransform loosePanel;
     [SerializeField] private TextMeshProUGUI looseText;
     [SerializeField] private Button looseButton;
@@ -41,6 +43,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private AudioClip panelTextCharSound;
     [SerializeField] private AudioClip button1AppearSound;
     [SerializeField] private AudioClip button2AppearSound;
+    [SerializeField] private AudioClip _starSound;
 
     [SerializeField] private RectTransform _blockTypeBackground;
     
@@ -128,12 +131,19 @@ public class UIController : MonoBehaviour
 
     public void ShowLoosePanel()
     {
+        // Сброс начальных состояний
+        loosePickaxeImage.gameObject.SetActive(false);
+        foreach (var star in looseStars)
+            star.gameObject.SetActive(false);
+
         ShowGenericPanel(
-            loosePanelParent, 
-            loosePanel, 
-            looseText, 
-            "You Lost", 
-            looseButton
+            loosePanelParent,
+            loosePanel,
+            looseText,
+            "YOU LOOSE",
+            looseButton,
+            loosePickaxeImage,
+            looseStars
         );
     }
     
@@ -147,6 +157,29 @@ public class UIController : MonoBehaviour
         panelRect.DOAnchorPos(Vector2.zero, 0.5f).SetEase(Ease.OutBack).OnComplete(() =>
         {
             StartCoroutine(AnimateGenericPanelContent(textElement, message, button));
+        });
+
+        textElement.text = "";
+        button.gameObject.SetActive(false);
+    }
+    private void ShowGenericPanel(
+        GameObject panelParent,
+        RectTransform panelRect,
+        TextMeshProUGUI textElement,
+        string message,
+        Button button,
+        Image pickaxeImage,
+        Image[] starsArray
+    )
+    {
+        panelParent.SetActive(true);
+        panelRect.anchoredPosition = new Vector2(Screen.width, 0);
+
+        MusicController.Instance.PlaySpecificSound(panelSlideSound);
+
+        panelRect.DOAnchorPos(Vector2.zero, 0.5f).SetEase(Ease.OutBack).OnComplete(() =>
+        {
+            StartCoroutine(AnimateGenericPanelContent(textElement, message, button, pickaxeImage, starsArray));
         });
 
         textElement.text = "";
@@ -184,7 +217,58 @@ public class UIController : MonoBehaviour
 
             // Можно воспроизводить звук появления звезды тут, если есть
             if (button1AppearSound != null)
-                MusicController.Instance.PlaySpecificSound(button1AppearSound);
+                MusicController.Instance.PlaySpecificSound(_starSound);
+
+            yield return new WaitForSeconds(0.3f);
+        }
+
+        // 4. Показываем кнопку
+        yield return new WaitForSeconds(0.2f);
+
+        button.gameObject.SetActive(true);
+        button.transform.localScale = Vector3.zero;
+        button.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
+
+        if (button1AppearSound != null)
+            MusicController.Instance.PlaySpecificSound(button1AppearSound);
+    }
+    private IEnumerator AnimateGenericPanelContent(
+        TextMeshProUGUI textElement,
+        string fullText,
+        Button button,
+        Image pickaxeImage,
+        Image[] starsArray
+    )
+    {
+        // 1. Показываем кирку
+        pickaxeImage.gameObject.SetActive(true);
+        pickaxeImage.transform.localScale = Vector3.zero;
+        pickaxeImage.transform.DOScale(Vector3.one, 0.4f).SetEase(Ease.OutBack);
+        yield return new WaitForSeconds(0.5f);
+
+        // 2. Анимация текста
+        for (int i = 0; i < fullText.Length; i++)
+        {
+            textElement.text += fullText[i];
+            textElement.ForceMeshUpdate();
+
+            if (panelTextCharSound != null)
+                MusicController.Instance.PlaySpecificSound(panelTextCharSound);
+
+            yield return new WaitForSeconds(0.03f);
+        }
+
+        yield return new WaitForSeconds(0.3f);
+
+        // 3. Показываем звезды по одной
+        for (int i = 0; i < starsArray.Length; i++)
+        {
+            starsArray[i].gameObject.SetActive(true);
+            starsArray[i].transform.localScale = Vector3.zero;
+            starsArray[i].transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
+
+            if (_starSound != null)
+                MusicController.Instance.PlaySpecificSound(_starSound);
 
             yield return new WaitForSeconds(0.3f);
         }
@@ -202,7 +286,7 @@ public class UIController : MonoBehaviour
 
     private IEnumerator AnimatePanelContent()
     {
-        string fullText = "No Smashes Left";
+        string fullText = "NO SMASHES LEFT";
 
         for (int i = 0; i < fullText.Length; i++)
         {
