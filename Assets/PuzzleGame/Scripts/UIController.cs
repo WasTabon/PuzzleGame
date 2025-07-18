@@ -16,6 +16,8 @@ public class UIController : MonoBehaviour
 
     [Header("Win Panel Elements")]
     [SerializeField] private GameObject winPanelParent;
+    [SerializeField] private Image pickaxeImage;
+    [SerializeField] private Image[] stars;
     [SerializeField] private RectTransform winPanel;
     [SerializeField] private TextMeshProUGUI winText;
     [SerializeField] private Button winButton;
@@ -40,6 +42,8 @@ public class UIController : MonoBehaviour
     [SerializeField] private AudioClip button1AppearSound;
     [SerializeField] private AudioClip button2AppearSound;
 
+    [SerializeField] private RectTransform _blockTypeBackground;
+    
     private string _prefix = "Block type: ";
     private Coroutine _animCoroutine;
 
@@ -53,6 +57,14 @@ public class UIController : MonoBehaviour
         _attacksCountText.text = $"{attacksCount.ToString()}";
     }
 
+    private void UpdateBlockTypeBackgroundWidth()
+    {
+        float textWidth = _blockTypeText.preferredWidth;
+        float padding = textWidth * 0.1f; // 10% запаса
+
+        _blockTypeBackground.sizeDelta = new Vector2(textWidth + padding, _blockTypeBackground.sizeDelta.y);
+    }
+    
     public void SetBlockText()
     {
         if (_animCoroutine != null)
@@ -100,11 +112,16 @@ public class UIController : MonoBehaviour
     
     public void ShowWinPanel()
     {
+        // Сброс начальных состояний
+        pickaxeImage.gameObject.SetActive(false);
+        foreach (var star in stars)
+            star.gameObject.SetActive(false);
+
         ShowGenericPanel(
             winPanelParent, 
             winPanel, 
             winText, 
-            "You Win!", 
+            "YOU WIN", 
             winButton
         );
     }
@@ -138,6 +155,13 @@ public class UIController : MonoBehaviour
     
     private IEnumerator AnimateGenericPanelContent(TextMeshProUGUI textElement, string fullText, Button button)
     {
+        // 1. Показываем кирку
+        pickaxeImage.gameObject.SetActive(true);
+        pickaxeImage.transform.localScale = Vector3.zero;
+        pickaxeImage.transform.DOScale(Vector3.one, 0.4f).SetEase(Ease.OutBack);
+        yield return new WaitForSeconds(0.5f);
+
+        // 2. Анимация текста
         for (int i = 0; i < fullText.Length; i++)
         {
             textElement.text += fullText[i];
@@ -149,13 +173,30 @@ public class UIController : MonoBehaviour
             yield return new WaitForSeconds(0.03f);
         }
 
+        yield return new WaitForSeconds(0.3f);
+
+        // 3. Показываем звезды по одной
+        for (int i = 0; i < stars.Length; i++)
+        {
+            stars[i].gameObject.SetActive(true);
+            stars[i].transform.localScale = Vector3.zero;
+            stars[i].transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
+
+            // Можно воспроизводить звук появления звезды тут, если есть
+            if (button1AppearSound != null)
+                MusicController.Instance.PlaySpecificSound(button1AppearSound);
+
+            yield return new WaitForSeconds(0.3f);
+        }
+
+        // 4. Показываем кнопку
         yield return new WaitForSeconds(0.2f);
 
         button.gameObject.SetActive(true);
         button.transform.localScale = Vector3.zero;
         button.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
 
-        if (button1AppearSound != null) // можно заменить на отдельный звук, если есть
+        if (button1AppearSound != null)
             MusicController.Instance.PlaySpecificSound(button1AppearSound);
     }
 
@@ -204,6 +245,8 @@ public class UIController : MonoBehaviour
             _blockTypeText.text += text[i];
             _blockTypeText.ForceMeshUpdate();
 
+            UpdateBlockTypeBackgroundWidth();
+            
             if (blockTextCharSound != null)
                 MusicController.Instance.PlaySpecificSound(blockTextCharSound);
 
@@ -232,6 +275,9 @@ public class UIController : MonoBehaviour
         {
             _blockTypeText.text = _blockTypeText.text.Substring(0, _blockTypeText.text.Length - 1);
             _blockTypeText.ForceMeshUpdate();
+            
+            UpdateBlockTypeBackgroundWidth();
+            
             yield return new WaitForSeconds(0.03f);
         }
 
