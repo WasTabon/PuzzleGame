@@ -44,7 +44,7 @@ public class RenameScrollViewItems : MonoBehaviour
 
             if (tmp != null)
             {
-                tmp.text = $"Level {i + 1}";
+                tmp.text = $"LEVEL {i + 1}";
             }
         }
     }
