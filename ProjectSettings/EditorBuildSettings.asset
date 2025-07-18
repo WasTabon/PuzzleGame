@@ -6,9 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/PuzzleGame/Scenes/Levels.unity
+    guid: 0b0a9e020a38ef347804f76198793943
+  - enabled: 1
     path: Assets/PuzzleGame/Scenes/Level1.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
-    path: Assets/PuzzleGame/Scenes/Levels.unity
-    guid: 0b0a9e020a38ef347804f76198793943
+    path: Assets/PuzzleGame/Scenes/Level2.unity
+    guid: a608a40d78fcbec4ca7670b23e687038
   m_configObjects: {}
